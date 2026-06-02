@@ -231,6 +231,20 @@ else
         fget $[SEC]@102:0B SECSERIAL
     end
 end
+# check cvreg as region mismatch between secureinfo region and title region is critical
+if find 1:/title/000400db/00017202 NULL
+	set CVREG "JPN"
+elif find 1:/title/000400db/00017302 NULL
+	set CVREG "USA"
+elif find 1:/title/000400db/00017102 NULL
+	set CVREG "EUR"
+elif find 1:/title/000400db/00017402 NULL
+	set CVREG "CHN"
+elif find 1:/title/000400db/00017502 NULL
+	set CVREG "KOR"
+elif find 1:/title/000400db/00017602 NULL
+	set CVREG "TWN"
+end
 
 # then check if it matches the console region, check for region change (presence of secureinfo_c), and use that for both data comparison and to see what region was changed to
 if chk -u $[ALTSEC] ""
@@ -266,8 +280,12 @@ elif chk $[REGSEC] "05"
 elif chk $[REGSEC] "06"
     set REG "TWN"
 end
-if chk -u $[REG] $[REGION]
-    set ESSENTIALS_LOG "$[ESSENTIALS_LOG]Warning: SecureInfo doesn't match the console's region.\n"
+if chk -u $[ALTSEC] ""
+	if chk -u $[ALTREG] $[CVREG]
+		set ESSENTIALS_LOG "$[ESSENTIALS_LOG]Critical: SecureInfo_C region doesn't match console's title set region. Console will not boot.\n"
+	end	
+elif chk -u $[REG] $[CVREG]
+    set ESSENTIALS_LOG "$[ESSENTIALS_LOG]Critical: SecureInfo_C doesn't exist, and $[SEC] region doesn't match the console's title set region. Console will not boot.\n"
 end
 if chk $[REGCHG] "1"
     if chk -u $[ALTREG] $[REGION]
