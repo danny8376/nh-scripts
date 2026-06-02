@@ -738,7 +738,7 @@ end
 set PREVIEW_MODE "ctrcheck v$[VERSION]\nCurrently processing: Other. Progress:\nNVRAM: ~~~\OTP: ---\n"
 # check whether the NVRAM SPI flash works, because it's bad news if it doesn't
 if not shaget M:/nvram.mem@0:400 NULL
-    set MISC_LOG "$[MISC_LOG]Critical: NVRAM is inaccessible.\n"
+    set MISC_LOG "$[MISC_LOG]Critical: NVRAM is inaccessible. Console may be unable to boot.\n"
 end
 # boot9strap decrypts the OTP and makes it available to GodMode9, most other bootloaders don't
 if not find M:/otp_dec.mem NULL
